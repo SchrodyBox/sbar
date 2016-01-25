@@ -1,0 +1,37 @@
+{
+	"name": "sbar",
+	"version": "1.0.0",
+	"description": "SchrodyBox Archive Utility",
+	"main": "./lib/sbar.js",
+	"scripts": {
+		"test": "mocha --reporter spec"
+	},
+	"bin": {
+		"sbar": "bin/sbar"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/SchrodyBox/sbar.git"
+	},
+	"keywords": [
+		"SchrodyBox",
+		"archive"
+	],
+	"author": "Eric Mann",
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://github.com/SchrodyBox/sbar/raw/master/LICENSE.md"
+		}
+	],
+	"bugs": {
+		"url": "https://github.com/SchrodyBox/sbar/issues"
+	},
+	"homepage": "https://github.com/SchrodyBox/sbar#readme",
+	"devDependencies": {
+		"mocha": "^2.3.4"
+	},
+	"dependencies": {
+		"commander": "^2.9.0"
+	}
+}
