@@ -4,6 +4,36 @@ var program = require( 'commander' );
 
 program.version( 'v' + require('../package.json' ).version ).description( 'Manipulate sbar archive files' );
 
+program.command( 'pack <dir> <output>' )
+	.alias( 'p' )
+	.description( 'create sbar archive' )
+	.option( '--compression <type>', 'type of compression to use' )
+	.option( '--unpack <expression>', 'do not pack files matching <expression>' )
+	.option( '--unpack-dir <expression>', 'do not pack dirs matching <expression>' )
+	.action( function ( dir, output, options ) {
+		var opts = {
+			compress:  options.compression,
+			unpack:    options.unpack,
+			unpackDir: options.unpackDir
+		};
+		sbar.createPackageWithOptions( dir, output, opts, function ( error ) {
+			if ( error ) {
+				console.error( error.stack );
+				process.exit( 1 );
+			}
+		} );
+	} );
+
+program.command( 'list <archive>' )
+	.alias( 'l' )
+	.description( 'list files of sbar archive' )
+	.action( function ( archive ) {
+		var files = sbar.listPackage( archive );
+		for ( var i in files ) {
+			console.log( files[i] );
+		}
+	} );
+
 program.parse( process.argv );
 
 if ( program.args.length === 0 ) {
