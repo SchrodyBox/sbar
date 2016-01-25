@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+var sbar = require( '../lib/sbar' );
+var program = require( 'commander' );
+
+program.version( 'v' + require('../package.json' ).version ).description( 'Manipulate sbar archive files' );
+
+program.parse( process.argv );
+
+if ( program.args.length === 0 ) {
+	program.help();
+}
