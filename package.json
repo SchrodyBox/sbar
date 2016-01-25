@@ -31,7 +31,7 @@
 	},
 	"homepage": "https://github.com/SchrodyBox/sbar#readme",
 	"devDependencies": {
-		"babel": "^6.3.26",
+		"babel-cli": "^6.4.5",
 		"mocha": "^2.3.4"
 	},
 	"dependencies": {
