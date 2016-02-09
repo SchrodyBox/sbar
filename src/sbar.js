@@ -19,7 +19,9 @@ var Keys = require( './keyfiles' );
  * @param {string} archive
  */
 function listPackage( archive ) {
-	Keys.init();
+	Keys.init().then( function() {
+
+	} );
 }
 
 module.exports = {

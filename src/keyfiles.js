@@ -15,6 +15,7 @@ var fs = require( 'fs' ),
 	path = require( 'path' ),
 	Promise = require( 'promise' ),
 	NodeRSA = require( 'node-rsa' ),
+	Fingerprint = require( './fingerprint' ),
 	write = Promise.denodeify( fs.writeFile ),
 	read = Promise.denodeify( fs.readFile );
 
@@ -25,6 +26,7 @@ var home = process.env.HOME || process.env.USERPROFILE,
 	dir = path.join( home, '.schrody' ),
 	public_key = '',
 	private_key = '',
+	fingerprint = '',
 	friend_keys = {};
 
 /**
@@ -33,13 +35,15 @@ var home = process.env.HOME || process.env.USERPROFILE,
  * @return {Promise}
  */
 function detect_keys() {
-	fs.mkdir( dir, function() {
-		fs.stat( path.join( dir, 'ident' ), function( err, stats ) {
-			if ( err ) {
-				return create_keys().then( load_keys );
-			} else {
-				return load_keys();
-			}
+	return new Promise( function( fulfill, reject ) {
+		fs.mkdir( dir, function() {
+			fs.stat( path.join( dir, 'ident' ), function( err, stats ) {
+				if ( err ) {
+					return create_keys().then( load_keys ).then( fulfill );
+				} else {
+					return load_keys().then( fulfill );
+				}
+			} );
 		} );
 	} );
 }
@@ -58,8 +62,8 @@ function create_keys() {
 		key.generateKeyPair();
 
 		// Export the keys
-		var private_key = key.exportKey( 'pkcs1-private-pem' ),
-			public_key = key.exportKey( 'pkcs1-public-pem' );
+		var private_key = key.exportKey( 'pkcs8-private-pem' ),
+			public_key = key.exportKey( 'pkcs8-public-pem' );
 
 		// Create fs.writeFile promises for each file to stream them asynchronously
 		var private_promise = write( path.join( dir, 'ident' ), private_key ),
@@ -79,13 +83,14 @@ function load_keys() {
 	return new Promise( function( fulfill, reject ) {
 		var private_promise = read( path.join( dir, 'ident' ) ).then( function( str ) {
 			private_key = str;
+			fingerprint = Fingerprint( str );
 		} );
 
 		var public_promise = read( path.join( dir, 'ident.pub' ) ).then( function( str ) {
 			public_key = str;
 		} );
 
-		// Delcare that we're done!
+		// Declare that we're done!
 		Promise.all( [ private_promise, public_promise ] ).then( fulfill );
 	} );
 }
@@ -97,5 +102,6 @@ module.exports = {
 	init: detect_keys,
 	'public': function() { return public_key; },
 	'private': function() { return private_key; },
-	friends: function() { return friend_keys; }
+	friends: function() { return friend_keys; },
+	fingerprint: function() { return fingerprint; }
 };
